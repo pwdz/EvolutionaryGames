@@ -1,3 +1,4 @@
+from box_list import BoxList
 import pygame
 import numpy as np
 
@@ -30,6 +31,10 @@ class Player():
 
         mode = self.mode
 
+        if len(box_lists) > 1:
+
+            agent_position = [camera + self.pos[0], self.pos[1]]
+            # print(agent_position[0], agent_position[1], box_lists[0].x, box_lists[0].gap_mid, '#',box_lists[1].x, box_lists[1].gap_mid )
         # manual control
         if self.control:
             self.get_keyboard_input(mode, events)
@@ -92,7 +97,7 @@ class Player():
         if mode == 'gravity':
             layer_sizes = [6, 20, 1]
         elif mode == 'helicopter':
-            layer_sizes = [6, 20, 1]
+            layer_sizes = [5, 20, 1]
         elif mode == 'thrust':
             layer_sizes = [6, 20, 1]
         return layer_sizes
@@ -107,6 +112,28 @@ class Player():
         # velocity example: 7
 
         direction = -1
+        if mode == 'helicopter':
+            agent_y = agent_position[1]
+            agent_x = agent_position[0]
+
+            if len(box_lists) >= 2:
+                c1, c2 = [(box_list.x, box_list.gap_mid) for box_list in box_lists[0:2]]
+            else:
+                c1 = (agent_x + CONFIG['WIDTH'] / 3, CONFIG['HEIGHT'] / 2)
+                c2 = (agent_x + CONFIG['WIDTH'] / 2, CONFIG['HEIGHT'] / 2)
+    
+
+            input = (agent_x - c1[0], agent_y - c1[1], agent_x - c2[0], agent_y - c2[1], velocity)
+            max_num = max(input)
+            if max_num == 0:
+                max_num = 1
+            input = [num / max_num for num in input]
+
+            out = self.nn.forward(np.array(input).reshape(len(input),1))
+            # print(out)
+            if out[0] >= 0.5:
+                direction *= -1
+
         return direction
 
     def collision_detection(self, mode, box_lists, camera):
