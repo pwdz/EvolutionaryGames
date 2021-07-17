@@ -4,7 +4,7 @@ from player import Player
 import numpy as np
 import copy
 from config import CONFIG
-
+import os
 
 class Evolution():
 
@@ -107,6 +107,8 @@ class Evolution():
     def next_population_selection(self, players, num_players):
 
         # TODO (additional): plotting
+        self.save_fitness(players)
+
         wheel = self.make_wheel(players)
         selected_players = self.select_sus(wheel, num_players)
 
@@ -150,3 +152,14 @@ class Evolution():
             if r>1:
                 r %= 1
         return selected_players
+
+    def save_fitness(self, players):
+        if not os.path.exists('fitness'):
+            os.makedirs('fitness')
+
+        f = open("fitness/fitness.txt", "a")
+        for p in players:
+            f.write(str(p.fitness))
+            f.write(" ")
+        f.write("\n")
+        f.close()
