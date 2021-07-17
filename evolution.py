@@ -19,16 +19,16 @@ class Evolution():
     def mutate(self, child):
         # child: an object of class `Player`
 
-        mutation_threshold = 0.8
+        mutation_threshold = 0.3
         center = 0
-        margin = 0.05
+        margin = 0.5
 
         for i in range(len(child.nn.w)):
-            if np.random.random_sample() > mutation_threshold:
+            if np.random.random_sample() >= mutation_threshold:
                 child.nn.w[i] += np.random.normal(center, margin, size = (child.nn.w[i].shape))
 
         for i in range(len(child.nn.b)):
-            if np.random.random_sample() > mutation_threshold:
+            if np.random.random_sample() >= mutation_threshold:
                 child.nn.b[i] += np.random.normal(center, margin, size = (child.nn.b[i].shape))
 
 
@@ -40,7 +40,7 @@ class Evolution():
             return [Player(self.mode) for _ in range(num_players)]
 
         else:
-            crossover_percent = 0.7
+            crossover_percent = 0.8
             
             tournament_children_count = int(num_players * (1 - crossover_percent))
             crossover_children_count = num_players - tournament_children_count
@@ -55,7 +55,6 @@ class Evolution():
 
     def tournament_select(self, num_players, prev_players, Q):
         new_players = []
-
         while len(new_players) != num_players:
             indexes = []
             possible_indexes = [i for i in range(len(prev_players))]
@@ -69,12 +68,13 @@ class Evolution():
                 if best_player.fitness < prev_players[index].fitness:
                     best_player = prev_players[index]
             new_players.append(copy.deepcopy(best_player))
-        print(len(new_players))
+            # prev_players.remove(best_player)
+        print("tournament select:",len(new_players))
         return new_players
 
     def apply_crossover(self, num_players, new_players, prev_players):
         for c in range(num_players):
-            i1 , i2 = np.random.randint(low=0 , high=len(prev_players)), np.random.randint(low=0 , high=len(prev_players)) 
+            i1, i2 = np.random.randint(low=0 , high=len(prev_players)), np.random.randint(low=0 , high=len(prev_players))
             
             while i1 == i2:
                 i2 = np.random.randint(low=0 , high=len(prev_players))
@@ -90,6 +90,7 @@ class Evolution():
             
             # for i in range(b_cross_index, len(new_child.nn.b)):
             #     new_child.nn.b[i] = prev_players[i2].nn.b[i] 
+
             for i in range(len(new_child.nn.w)):
                 new_child.nn.w[i] = (new_child.nn.w[i] + prev_players[i2].nn.w[i]) / 2
     

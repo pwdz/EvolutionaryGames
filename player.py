@@ -116,18 +116,23 @@ class Player():
             agent_y = agent_position[1]
             agent_x = agent_position[0]
 
-            if len(box_lists) >= 2:
-                c1, c2 = [(box_list.x, box_list.gap_mid) for box_list in box_lists[0:2]]
-            else:
-                c1 = (agent_x + CONFIG['WIDTH'] / 3, CONFIG['HEIGHT'] / 2)
-                c2 = (agent_x + CONFIG['WIDTH'] / 2, CONFIG['HEIGHT'] / 2)
-    
 
-            input = (agent_x - c1[0], agent_y - c1[1], agent_x - c2[0], agent_y - c2[1], velocity)
-            max_num = max(input)
-            if max_num == 0:
-                max_num = 1
-            input = [num / max_num for num in input]
+            
+            boxes = [(box_list.x, box_list.gap_mid) for box_list in box_lists if box_list.x > agent_position[0]]
+            if len(boxes) >= 2:
+                c1, c2 = boxes[0:2]
+            else:
+                c1 = (agent_x + CONFIG['WIDTH'] / 1.5, CONFIG['HEIGHT'] / 2)
+                c2 = (agent_x + CONFIG['WIDTH'] / 1, CONFIG['HEIGHT'] / 2)
+    
+            # print(velocity)
+            input = ((c1[0] - agent_x) / CONFIG['WIDTH'], (c2[0] - agent_x) / CONFIG['WIDTH'], (agent_y - c1[1]) / CONFIG["HEIGHT"], (agent_y - c2[1]) / CONFIG["HEIGHT"], velocity / 10)
+            # max_num = max(input, key=lambda x:np.abs(x))
+            # if max_num == 0:
+                # print("+++++++++++++++")
+                # max_num = 1
+            # input = [num / max_num for num in input]
+            # print(max_num, input)
 
             out = self.nn.forward(np.array(input).reshape(len(input),1))
             # print(out)
