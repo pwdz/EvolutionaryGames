@@ -40,7 +40,7 @@ class Evolution():
             return [Player(self.mode) for _ in range(num_players)]
 
         else:
-            crossover_percent = 0.8
+            crossover_percent = 0.75
             
             tournament_children_count = int(num_players * (1 - crossover_percent))
             crossover_children_count = num_players - tournament_children_count
@@ -81,21 +81,22 @@ class Evolution():
             
             #i1 and i2 are differnet.
             new_child = copy.deepcopy(prev_players[i1])
-            
-            # w_cross_index = np.random.randint(low=1, high=len(new_child.nn.w))
-            # b_cross_index = np.random.randint(low=1, high=len(new_child.nn.b))
 
-            # for i in range(w_cross_index, len(new_child.nn.w)):
-            #     new_child.nn.w[i] = prev_players[i2].nn.w[i]
-            
-            # for i in range(b_cross_index, len(new_child.nn.b)):
-            #     new_child.nn.b[i] = prev_players[i2].nn.b[i] 
+            if np.random.random_sample() >= 0.5:            
+                w_cross_index = np.random.randint(low=1, high=len(new_child.nn.w))
+                b_cross_index = np.random.randint(low=1, high=len(new_child.nn.b))
 
-            for i in range(len(new_child.nn.w)):
-                new_child.nn.w[i] = (new_child.nn.w[i] + prev_players[i2].nn.w[i]) / 2
-    
-            for i in range(len(new_child.nn.b)):
-                new_child.nn.b[i] = (new_child.nn.b[i] + prev_players[i2].nn.b[i]) / 2
+                for i in range(w_cross_index, len(new_child.nn.w)):
+                    new_child.nn.w[i] = prev_players[i2].nn.w[i]
+                
+                for i in range(b_cross_index, len(new_child.nn.b)):
+                    new_child.nn.b[i] = prev_players[i2].nn.b[i] 
+            else:
+                for i in range(len(new_child.nn.w)):
+                    new_child.nn.w[i] = (new_child.nn.w[i] + prev_players[i2].nn.w[i]) / 2
+        
+                for i in range(len(new_child.nn.b)):
+                    new_child.nn.b[i] = (new_child.nn.b[i] + prev_players[i2].nn.b[i]) / 2
 
             new_players.append(new_child)    
         
