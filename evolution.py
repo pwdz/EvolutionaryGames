@@ -4,7 +4,9 @@ from player import Player
 import numpy as np
 import copy
 from config import CONFIG
+from config import CURRENT_TIME
 import os
+import time
 
 class Evolution():
 
@@ -22,6 +24,10 @@ class Evolution():
         mutation_threshold = 0.3
         center = 0
         margin = 0.5
+
+        if self.mode == 'thrust':
+            mutation_threshold = 0.15
+            margin = 0.5
 
         for i in range(len(child.nn.w)):
             if np.random.random_sample() >= mutation_threshold:
@@ -157,7 +163,7 @@ class Evolution():
         if not os.path.exists('fitness'):
             os.makedirs('fitness')
 
-        f = open("fitness/fitness.txt", "a")
+        f = open("fitness/" + self.mode + str(CURRENT_TIME)+".txt", "a")
         for p in players:
             f.write(str(p.fitness))
             f.write(" ")

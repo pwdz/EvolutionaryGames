@@ -1,3 +1,4 @@
+import time
 CONFIG = {
 
     # DO NOT CHANGE
@@ -12,3 +13,4 @@ CONFIG = {
     'num_players': 150,    # number of players generated in each step
     'checkpoint_freq': 5   # the frequency of saving generations
 }
+CURRENT_TIME = int(time.time()) % 1000000

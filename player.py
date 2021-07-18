@@ -95,11 +95,11 @@ class Player():
 
         layer_sizes = None
         if mode == 'gravity':
-            layer_sizes = [6, 20, 1]
+            layer_sizes = [5, 20, 1]
         elif mode == 'helicopter':
             layer_sizes = [5, 20, 1]
         elif mode == 'thrust':
-            layer_sizes = [6, 20, 1]
+            layer_sizes = [5, 20, 2]
         return layer_sizes
 
     
@@ -112,22 +112,36 @@ class Player():
         # velocity example: 7
 
         direction = -1
-        if mode == 'helicopter':
-            agent_y = agent_position[1]
-            agent_x = agent_position[0]
-            
-            boxes = [(box_list.x, box_list.gap_mid) for box_list in box_lists if box_list.x > agent_position[0]]
-            if len(boxes) >= 2:
-                c1, c2 = boxes[0:2]
-            else:
-                c1 = (agent_x + CONFIG['WIDTH'] / 1.5, CONFIG['HEIGHT'] / 2)
-                c2 = (agent_x + CONFIG['WIDTH'] / 1, CONFIG['HEIGHT'] / 2)
-    
-            input = ((c1[0] - agent_x) / CONFIG['WIDTH'], (c2[0] - agent_x) / CONFIG['WIDTH'], (agent_y - c1[1]) / CONFIG["HEIGHT"], (agent_y - c2[1]) / CONFIG["HEIGHT"], velocity / 10)
 
+        agent_y = agent_position[1]
+        agent_x = agent_position[0]
+        
+        boxes = [(box_list.x, box_list.gap_mid) for box_list in box_lists if box_list.x > agent_position[0]]
+
+        if len(boxes) >= 2:
+            c1, c2 = boxes[0:2]
+        else:
+            c1 = (agent_x + CONFIG['WIDTH'] / 1.5, CONFIG['HEIGHT'] / 2)
+            c2 = (agent_x + CONFIG['WIDTH'] / 1, CONFIG['HEIGHT'] / 2)
+ 
+        
+        if mode in ['helicopter', 'gravity']:
+            input = [(c1[0] - agent_x) / CONFIG['WIDTH'], (c2[0] - agent_x) / CONFIG['WIDTH'], (agent_y - c1[1]) / CONFIG["HEIGHT"], (agent_y - c2[1]) / CONFIG["HEIGHT"], velocity / 10]
             out = self.nn.forward(np.array(input).reshape(len(input),1))
-            if out[0] >= 0.5:
-                direction *= -1
+
+            if mode in ['helicopter', 'gravity']:
+                if out[0] >= 0.5:
+                    direction = 1
+                else:
+                    direction = -1
+        else:
+            input = [(c1[0] - agent_x) / CONFIG['WIDTH'], (c2[0] - agent_x) / CONFIG['WIDTH'], (agent_y - c1[1]) / CONFIG["HEIGHT"], (agent_y - c2[1]) / CONFIG["HEIGHT"], velocity / 500]
+            out = self.nn.forward(np.array(input).reshape(len(input),1))
+            i = np.argmax(out)
+            if i == 0:
+                direction = 1
+            else:
+                direction = -1
 
         return direction
 

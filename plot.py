@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 
-f = open("fitness/fitness.txt", "r")
+print("Filename:")
+filename = input()
+f = open("fitness/" + filename, "r")
 lines = f.readlines()
 
 generation_index = 0

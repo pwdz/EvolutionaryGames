@@ -9,6 +9,7 @@ from evolution import Evolution
 from config import CONFIG
 from util import save_generation, load_generation
 
+
 # argument parser
 parser = argparse.ArgumentParser(
     description='Parser',
