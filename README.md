@@ -8,7 +8,7 @@ The agent needs to learn to maneuver via neural network + evolution.
 - Evolutionary Algorithm
   - SUS(Stochastic universal sampling)
   - Crossover
-  - q tournament
+  - Q Tournament
 - Neural Network
 
 ## Game Modes
